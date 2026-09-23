@@ -5,17 +5,21 @@ import com.moviematch.backend.dto.UserResponse;
 import com.moviematch.backend.exception.EmailAlreadyExistsException;
 import com.moviematch.backend.model.User;
 import com.moviematch.backend.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    // 1. Declare the repository instance variable
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // 2. Inject it through the constructor
-    public UserService(UserRepository userRepository) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponse createUser(UserRequest request) {
@@ -24,16 +28,20 @@ public class UserService {
             throw new EmailAlreadyExistsException("Email is already registered");
         }
 
-        // Map DTO to Entity and Save
         User user = new User();
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        // set other properties...
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User savedUser = userRepository.save(user);
 
-        // Map Entity to Response DTO
         UserResponse response = new UserResponse();
+
         response.setId(savedUser.getId());
+        response.setFirstName(savedUser.getFirstName());
+        response.setLastName(savedUser.getLastName());
         response.setEmail(savedUser.getEmail());
 
         return response;
