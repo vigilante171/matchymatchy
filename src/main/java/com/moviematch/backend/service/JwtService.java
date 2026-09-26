@@ -1,5 +1,6 @@
 package com.moviematch.backend.service;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -31,5 +32,31 @@ public class JwtService {
                 .expiration(expiration)
                 .signWith(key)
                 .compact();
+    }
+    public String extractEmail(String token) {
+
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean isTokenValid(String token) {
+
+        try {
+
+            Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
+
+            return true;
+
+        } catch (JwtException | IllegalArgumentException e) {
+
+            return false;
+        }
     }
 }
