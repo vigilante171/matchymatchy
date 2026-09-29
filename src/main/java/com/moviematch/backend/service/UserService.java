@@ -3,6 +3,7 @@ package com.moviematch.backend.service;
 import com.moviematch.backend.dto.UserRequest;
 import com.moviematch.backend.dto.UserResponse;
 import com.moviematch.backend.exception.EmailAlreadyExistsException;
+import com.moviematch.backend.model.Role;
 import com.moviematch.backend.model.User;
 import com.moviematch.backend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +35,7 @@ public class UserService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.USER);
 
         User savedUser = userRepository.save(user);
 
