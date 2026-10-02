@@ -59,4 +59,12 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
     }
+    @ExceptionHandler(DuplicateSwipeException.class)
+    public ResponseEntity<String> handleDuplicateSwipe(
+            DuplicateSwipeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(exception.getMessage());
+    }
 }
