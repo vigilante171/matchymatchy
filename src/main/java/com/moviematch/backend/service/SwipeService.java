@@ -18,13 +18,16 @@ public class SwipeService {
 
     private final SwipeRepository swipeRepository;
     private final UserRepository userRepository;
+    private final MatchService matchService;
 
     public SwipeService(
             SwipeRepository swipeRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            MatchService matchService) {
 
         this.swipeRepository = swipeRepository;
         this.userRepository = userRepository;
+        this.matchService = matchService;
     }
 
     public SwipeResponse createSwipe(
@@ -38,10 +41,13 @@ public class SwipeService {
                 .findByUserIdAndMovieId(user.getId(), request.getMovieId())
                 .isPresent()) {
 
-            throw new DuplicateSwipeException("You have already swiped on this movie");
+            throw new DuplicateSwipeException(
+                    "You have already swiped on this movie"
+            );
         }
 
         Swipe swipe = new Swipe();
+
         swipe.setUserId(user.getId());
         swipe.setMovieId(request.getMovieId());
         swipe.setDirection(request.getDirection());
@@ -50,6 +56,7 @@ public class SwipeService {
         Swipe savedSwipe = swipeRepository.save(swipe);
 
         SwipeResponse response = new SwipeResponse();
+
         response.setId(savedSwipe.getId());
         response.setMovieId(savedSwipe.getMovieId());
         response.setDirection(savedSwipe.getDirection());
@@ -57,6 +64,7 @@ public class SwipeService {
 
         // Check for match if current action is LIKE
         if (request.getDirection() == SwipeDirection.LIKE) {
+
             Optional<Swipe> matchingSwipe = swipeRepository
                     .findFirstByMovieIdAndDirectionAndUserIdNot(
                             request.getMovieId(),
@@ -65,9 +73,22 @@ public class SwipeService {
                     );
 
             if (matchingSwipe.isPresent()) {
+
+                String matchedUserId =
+                        matchingSwipe.get().getUserId();
+
+                // Create and save the match
+                matchService.createMatch(
+                        user.getId(),
+                        matchedUserId,
+                        request.getMovieId()
+                );
+
                 response.setMatch(true);
-                response.setMatchedUserId(matchingSwipe.get().getUserId());
+                response.setMatchedUserId(matchedUserId);
+
             } else {
+
                 response.setMatch(false);
             }
         }

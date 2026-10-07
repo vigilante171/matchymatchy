@@ -16,6 +16,6 @@ public class SwipeResponse {
     private LocalDateTime createdAt;
 
     // Match details
-    private boolean isMatch;
+    private boolean match;
     private String matchedUserId;
 }

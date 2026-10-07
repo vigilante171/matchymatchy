@@ -4,7 +4,7 @@ import com.moviematch.backend.model.Swipe;
 import com.moviematch.backend.model.SwipeDirection;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
+
 import java.util.Optional;
 
 public interface SwipeRepository extends MongoRepository<Swipe, String> {

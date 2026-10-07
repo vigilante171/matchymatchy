@@ -23,3 +23,4 @@ public class Swipe {
 
     private LocalDateTime createdAt;
 }
+
