@@ -1,0 +1,27 @@
+package com.moviematch.backend.model;
+
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "watch_rooms")
+public class WatchRoom {
+
+    @Id
+    private String id;
+
+    private String matchId;
+
+    private String movieId;
+
+    private String hostUserId;
+
+    private boolean active;
+
+    private LocalDateTime createdAt;
+}
