@@ -1,6 +1,8 @@
 package com.moviematch.backend.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -24,4 +26,11 @@ public class WatchRoom {
     private boolean active;
 
     private LocalDateTime createdAt;
+
+    // Playback state
+    private double currentPosition;
+
+    private boolean playing;
+
+    private LocalDateTime lastPlaybackUpdate;
 }

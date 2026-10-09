@@ -1,5 +1,6 @@
 package com.moviematch.backend.controller;
 
+import com.moviematch.backend.dto.PlaybackStateResponse;
 import com.moviematch.backend.dto.WatchRoomResponse;
 import com.moviematch.backend.repository.UserRepository;
 import com.moviematch.backend.service.WatchRoomService;
@@ -50,6 +51,17 @@ public class WatchRoomController {
 
         return watchRoomService.getRoom(
                 userId,
+                roomId
+        );
+
+    }
+    @GetMapping("/{roomId}/playback")
+    public PlaybackStateResponse getPlaybackState(
+            @PathVariable String roomId,
+            Authentication authentication) {
+
+        return watchRoomService.getPlaybackState(
+                authentication.getName(),
                 roomId
         );
     }

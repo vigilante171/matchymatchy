@@ -1,9 +1,6 @@
 package com.moviematch.backend.dto;
 
 import com.moviematch.backend.model.WatchRoomAction;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,18 +10,15 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WatchRoomMessage {
+public class PlaybackStateResponse {
 
-    @NotBlank
     private String roomId;
 
-    @NotNull
-    private WatchRoomAction action;
+    private String movieId;
 
-    @PositiveOrZero
     private double position;
 
-    private Boolean playing;
+    private boolean playing;
 
     private LocalDateTime lastPlaybackUpdate;
 }

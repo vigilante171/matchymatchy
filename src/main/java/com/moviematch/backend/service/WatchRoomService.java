@@ -1,5 +1,7 @@
 package com.moviematch.backend.service;
 
+import com.moviematch.backend.dto.PlaybackStateResponse;
+import com.moviematch.backend.dto.WatchRoomMessage;
 import com.moviematch.backend.dto.WatchRoomResponse;
 import com.moviematch.backend.model.Match;
 import com.moviematch.backend.model.WatchRoom;
@@ -128,6 +130,62 @@ public class WatchRoomService {
                 room.getHostUserId(),
                 room.isActive(),
                 room.getCreatedAt()
+        );
+    }
+    public WatchRoom updatePlayback(
+            String email,
+            WatchRoomMessage message) {
+
+        // Verify that the user can access this room.
+        verifyRoomAccess(email, message.getRoomId());
+
+        // Find the active room.
+        WatchRoom room = watchRoomRepository
+                .findByIdAndActiveTrue(message.getRoomId())
+                .orElseThrow(() ->
+                        new RuntimeException("Watch room not found"));
+
+        // Update the playback state based on the requested action.
+        switch (message.getAction()) {
+
+            case PLAY -> {
+                room.setCurrentPosition(message.getPosition());
+                room.setPlaying(true);
+            }
+
+            case PAUSE -> {
+                room.setCurrentPosition(message.getPosition());
+                room.setPlaying(false);
+            }
+
+            case SEEK -> room.setCurrentPosition(message.getPosition());
+        }
+
+        room.setLastPlaybackUpdate(LocalDateTime.now());
+
+        // Persist the updated state in MongoDB.
+        return watchRoomRepository.save(room);
+    }
+    public PlaybackStateResponse getPlaybackState(
+            String email,
+            String roomId) {
+
+        // Verify that the user belongs to this watch room.
+        verifyRoomAccess(email, roomId);
+
+        // Retrieve the active room.
+        WatchRoom room = watchRoomRepository
+                .findByIdAndActiveTrue(roomId)
+                .orElseThrow(() ->
+                        new RuntimeException("Watch room not found"));
+
+        // Return the current playback state.
+        return new PlaybackStateResponse(
+                room.getId(),
+                room.getMovieId(),
+                room.getCurrentPosition(),
+                room.isPlaying(),
+                room.getLastPlaybackUpdate()
         );
     }
 }
